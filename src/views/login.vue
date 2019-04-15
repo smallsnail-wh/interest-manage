@@ -12,6 +12,7 @@
   text-align: center;
   /*background: rebeccapurple;*/
   background-image: url(../images/login.jpg);
+  background-size: 100%;
 }
 .index .ivu-row-flex {
   height: 100%;
@@ -75,6 +76,10 @@
   width: 35px;
   height: 40px;
 }
+.login-button {
+  width: 250px;
+  margin-bottom: 20px;
+}
 </style>
 <template>
     <div class="index">
@@ -85,7 +90,7 @@
                         <li style="border-bottom: 1px solid #e9eaec;">
                             <div class="content">
                                 <img src="../images/logo.jpg" style="width: 40px;height: 40px;" align="absmiddle" />
-                                <span style="float:right;font-size: 15px"><Icon type="ios-log-in"></Icon>欢迎登录</span>
+                                <span style="float:right;font-size: 15px"><Icon type="ios-log-in"></Icon>控制台</span>
                             </div>
                         </li>
                         <li>
@@ -101,21 +106,7 @@
                                     <Icon type="ios-lock-outline" slot="prepend"></Icon></Input>
                                 </FormItem>
                                 <FormItem>
-                                    <Button type="primary" @click="login('formLogin')" style="width: 250px">登录</Button>
-                                    <ul class="account-list">
-                                        <li>
-                                            <a href="https://github.com/login/oauth/authorize?client_id=bbb5cc2034eb62484c1c&state=github" style="{right: 26px;}">
-                                                <!-- <Icon  style="color: rebeccapurple;" size="40" type="social-github"></Icon> -->
-                                                <img class="icon" src="../images/GitHub.svg" />
-                                            </a>
-                                        </li>
-                                        
-                                        <li>
-                                            <a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101512648&redirect_uri=http://www.lovemtt.com/qq&state=qq" style="{right: 26px;}">
-                                                <img class="icon" src="../images/social-qq.svg" />  
-                                            </a>
-                                        </li>
-                                    </ul>
+                                    <Button type="primary" @click="login('formLogin')" class="login-button" >登录</Button>
                                 </FormItem>
                             </dl>
                         </li>

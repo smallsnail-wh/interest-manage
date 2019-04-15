@@ -31,7 +31,7 @@ export default {
     userLogin(context, { user_name, user_password, router }) {
       axios({
         method: "post",
-        url: "/oauth/token",
+        url: "/interest/auth/oauth/token",
         params: {
           username: user_name,
           password: user_password,
@@ -53,7 +53,7 @@ export default {
           /*router.push({path:"base"});*/
           axios.defaults.headers.common["Authorization"] =
             "bearer " + localStorage.getItem("currentUser_token");
-          router.push({ path: "/page/home" });
+          router.push({ path: "/base" });
           context.commit("setSignFalse", null, { root: true });
           /*this.$route.router.push({ path: '/base' });*/
         })
