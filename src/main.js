@@ -8,7 +8,6 @@ import VueAxios from "vue-axios";
 import store from "./store/store";
 import VueQuillEditor from "vue-quill-editor";
 
-import "./styles/common.css";
 // import "iview/dist/styles/iview.css";
 // import "quill/dist/quill.core.css";
 // import "quill/dist/quill.snow.css";

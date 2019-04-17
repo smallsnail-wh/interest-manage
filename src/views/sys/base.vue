@@ -88,7 +88,7 @@
             <Col span="4" class="layout-menu-left">
                 <div class="layout-logo-left">
                   <div>
-                    <a @click="backHome()">
+                    <a href="https://www.lovemtt.com" target="_blank">
                         <img src="../../images/logo.jpg" style="width: 50px;height: 50px;" align="absmiddle" />
                     </a>
                       <strong>控制台</strong>
@@ -159,7 +159,7 @@ export default {
     /*this.userName = window.localStorage.getItem("currentUser_name");*/
     this.axios({
       method: "get",
-      url: "/public/user"
+      url: "/interest/user/public/user"
     })
       .then(
         function(response) {
@@ -171,7 +171,7 @@ export default {
       });
     this.axios({
       method: "get",
-      url: "/manage/menu"
+      url: "/interest/user/menus/page"
     })
       .then(
         function(response) {
@@ -204,9 +204,6 @@ export default {
     /*下拉菜单选择事件*/
     dropdownSelect(e) {
       this.$store.dispatch("users/loginOUt", { router: this.$router });
-    },
-    backHome() {
-      this.$router.push("/page/home");
     }
   }
 };

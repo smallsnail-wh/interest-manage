@@ -7,10 +7,13 @@
 	<div style="margin: 20px;">
         <div>
             <Row style="margin-bottom: 25px;">
-                <Col span="8">用户名：
+                <Col span="6">用户名：
                 	<Input v-model="name" placeholder="请输入..." style="width:200px" />
                 </Col>
-                <Col span="8"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
+                <Col span="6">用户ID：
+                  <Input v-model="userId" placeholder="请输入..." style="width:200px" />
+                </Col>
+                <Col span="3"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
             </Row>
         </div>            
         <div>
@@ -66,14 +69,13 @@
 export default {
   data() {
     return {
+      userId: null,
       /*用于查找的登录名*/
       name: null,
       /*选择的数量*/
       count: null,
       /*选中的组数据*/
       groupId: null,
-      /*新建modal的显示参数*/
-      newModal: false,
       /*修改modal的显示参数*/
       modifyModal: false,
       /*角色配置modal的显示参数*/
@@ -96,82 +98,11 @@ export default {
         passwordAgain: null,
         email: null
       },
-      /*用于添加的user实体*/
-      userNew: {
-        id: null,
-        name: null,
-        loginName: null,
-        password: null,
-        passwordAgain: null,
-        email: null
-      },
       /*用于修改的user实体*/
       userModify: {
         id: null,
         name: null,
         usertype: null
-      },
-      /*新建验证*/
-      ruleNew: {
-        name: [
-          {
-            type: "string",
-            required: true,
-            message: "输入用户名",
-            trigger: "blur"
-          }
-        ],
-        loginName: [
-          {
-            type: "string",
-            required: true,
-            message: "输入登录名",
-            trigger: "blur"
-          }
-        ],
-        password: [
-          {
-            type: "string",
-            required: true,
-            message: "输入密码",
-            trigger: "blur"
-          }
-        ],
-        passwordAgain: [
-          {
-            type: "string",
-            required: true,
-            message: "输入再次密码",
-            trigger: "blur"
-          }
-        ],
-        email: [
-          { required: true, message: "输入邮箱", trigger: "blur" },
-          { type: "email", message: "输入正确的邮箱格式", trigger: "blur" }
-        ]
-      },
-      /*修改验证*/
-      ruleModify: {
-        name: [
-          {
-            type: "string",
-            required: true,
-            message: "输入用户名",
-            trigger: "blur"
-          }
-        ],
-        password: [
-          {
-            type: "string",
-            required: true,
-            message: "输入密码",
-            trigger: "blur"
-          }
-        ],
-        email: [
-          { required: true, message: "输入邮箱", trigger: "blur" },
-          { type: "email", message: "输入正确的邮箱格式", trigger: "blur" }
-        ]
       },
       /*表显示字段*/
       columns1: [
@@ -185,8 +116,24 @@ export default {
           key: "name"
         },
         {
-          title: "邮箱",
-          key: "email"
+          title: "头像",
+          key: "headimg",
+          width: 80,
+          align: "center",
+          render: (h, params) => {
+            return h(
+              "img",
+              {
+                attrs: {
+                  src: params.row.headimg
+                },
+                style: {
+                  width: '30px',  
+                  height: '30px'
+                }
+              }
+            );
+          }
         },
         {
           title: "Github",
@@ -206,14 +153,20 @@ export default {
           }
         },
         {
+          title: "邮箱",
+          key: "email"
+        },
+        {
           title: "用户类型",
           align: "center",
           key: "usertype",
           render: (h, params) => {
-            if (params.row.usertype == 0) {
-              return h("div", [h("strong", null, "普通用户")]);
-            } else if (params.row.usertype == 1) {
-              return h("div", [h("strong", null, "管理员")]);
+            if (params.row.githubid != null && params.row.githubid != '' ) {
+              return h("div", [h("strong", {style:{color: '#f90'}}, "github用户")]);
+            } else if (params.row.qqid != null && params.row.qqid != '' ) {
+              return h("div", [h("strong", {style:{color: 'rebeccapurple'}}, "qq用户")]);
+            } else {
+              return h("div", [h("strong", null, "系统用户")]);
             }
           }
         },
@@ -280,7 +233,7 @@ export default {
     });
     this.axios({
       method: "get",
-      url: "/roles/all"
+      url: "/interest/user/roles/all"
     })
       .then(
         function(response) {
@@ -305,15 +258,6 @@ export default {
       this.user.password = null;
       this.user.email = null;
     },
-    /*userNew实体初始化*/
-    initUserNew() {
-      this.userNew.id = null;
-      this.userNew.name = null;
-      this.userNew.loginName = null;
-      this.userNew.password = null;
-      this.userNew.passwordAgain = null;
-      this.userNew.email = null;
-    },
     /*userModify实体初始化*/
     initUserModify() {
       this.userModify.id = null;
@@ -322,22 +266,13 @@ export default {
       this.userModify.password = null;
       this.userModify.email = null;
     },
-    /*userNew设置*/
+    /*user设置*/
     userSet(e) {
       this.user.id = e.id;
       this.user.name = e.name;
       this.user.loginName = e.loginName;
       this.user.password = e.password;
       this.user.email = e.email;
-    },
-    /*userNew设置*/
-    userNewSet(e) {
-      this.userNew.id = e.id;
-      this.userNew.name = e.name;
-      this.userNew.loginName = e.loginName;
-      this.userNew.password = e.password;
-      this.userNew.passwordAgain = e.password;
-      this.userNew.email = e.email;
     },
     /*userModify设置*/
     userModifySet(e) {
@@ -368,11 +303,12 @@ export default {
     getTable(e) {
       this.axios({
         method: "get",
-        url: "/users",
+        url: "/interest/user/users",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize,
-          name: e.name
+          name: e.name,
+          userId: e.userId
         }
       })
         .then(
@@ -391,7 +327,8 @@ export default {
       this.initPageInfo();
       this.getTable({
         pageInfo: this.pageInfo,
-        name: this.name
+        name: this.name,
+        userId: this.userId
       });
     },
     /*分页点击事件*/
@@ -399,59 +336,8 @@ export default {
       this.pageInfo.page = e - 1;
       this.getTable({
         pageInfo: this.pageInfo,
-        name: this.name
-      });
-    },
-    /*新建点击触发事件*/
-    openNewModal() {
-      this.newModal = true;
-      this.initUserNew();
-      this.data1.sort();
-      this.count = 0;
-      this.groupId = null;
-    },
-    /*新建modal的newOk点击事件*/
-    newOk(userNew) {
-      this.$refs[userNew].validate(valid => {
-        if (valid) {
-          if (this.userNew.password == this.userNew.passwordAgain) {
-            this.initUser();
-            this.userSet(this.userNew);
-            this.axios({
-              method: "post",
-              url: "/users/user",
-              data: this.user
-            })
-              .then(
-                function(response) {
-                  this.initUserNew();
-                  this.getTable({
-                    pageInfo: this.pageInfo,
-                    name: this.name
-                  });
-                  this.$Message.info("新建成功");
-                }.bind(this)
-              )
-              .catch(function(error) {
-                alert(error);
-              });
-            this.newModal = false;
-          } else {
-            this.$Message.error("两次输入的密码不相同！");
-            this.loading = false;
-            this.$nextTick(() => {
-              this.loading = true;
-            });
-          }
-        } else {
-          this.$Message.error("表单验证失败!");
-          setTimeout(() => {
-            this.loading = false;
-            this.$nextTick(() => {
-              this.loading = true;
-            });
-          }, 1000);
-        }
+        name: this.name,
+        userId: this.userId
       });
     },
     /*点击修改时判断是否只选择一个*/
@@ -478,7 +364,6 @@ export default {
       })
         .then(
           function(response) {
-            this.initUserNew();
             this.getTable({
               pageInfo: this.pageInfo,
               name: this.name
@@ -540,7 +425,7 @@ export default {
       this.modifyModal = true;
       this.data1.sort();
     },
-    /*流程配置*/
+    /*角色配置*/
     relationSet(e) {
       this.roleModal = true;
       this.data2 = [];
