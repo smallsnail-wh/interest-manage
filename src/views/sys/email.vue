@@ -153,7 +153,7 @@ export default {
     getTable(e) {
       this.axios({
         method: "get",
-        url: "/emails",
+        url: "/interest/message/emails",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize
@@ -194,7 +194,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "delete",
-          url: "/admin/emails",
+          url: "/interest/message/emails",
           data: this.groupId
         })
           .then(

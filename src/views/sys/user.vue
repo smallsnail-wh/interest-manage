@@ -162,9 +162,9 @@ export default {
           key: "usertype",
           render: (h, params) => {
             if (params.row.githubid != null && params.row.githubid != '' ) {
-              return h("div", [h("strong", {style:{color: '#f90'}}, "github用户")]);
+              return h("div", [h("strong", {style:{color: 'rebeccapurple'}}, "github")]);
             } else if (params.row.qqid != null && params.row.qqid != '' ) {
-              return h("div", [h("strong", {style:{color: 'rebeccapurple'}}, "qq用户")]);
+              return h("div", [h("strong", {style:{color: '#f90'}}, "qq")]);
             } else {
               return h("div", [h("strong", null, "系统用户")]);
             }

@@ -50,8 +50,8 @@ const routers = [
         }
       },
       {
-        path: "user",
-        name: "user",
+        path: "system-user",
+        name: "system-user",
         component: resolve => require(["./views/sys/user.vue"], resolve),
         meta: {
           title: "user"
