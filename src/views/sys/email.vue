@@ -19,8 +19,8 @@
         </div>
         <Modal :mask-closable="false" :visible.sync="modal" v-model="modal" width="600" title="查看">
 	        <Form :label-width="80" >
-	        	<Form-item label="用户名:">
-	        		<strong>{{email.username}}</strong>
+	        	<Form-item label="用户ID:">
+	        		<strong>{{email.userId}}</strong>
                     <!-- <Input v-model="email.username" style="width: 204px" disabled="disabled" /> -->
                 </Form-item>
                 <Form-item label="内容:">
@@ -50,12 +50,12 @@ export default {
       /*user实体*/
       email: {
         id: null,
-        username: null,
+        userId: null,
         title: null,
         email: null,
         name: null,
         content: null,
-        createtime: null
+        createTime: null
       },
       /*表显示字段*/
       columns1: [
@@ -65,25 +65,33 @@ export default {
           align: "center"
         },
         {
+          title: "用户ID",
+          width: 80,
+          key: "userId"
+        },
+        {
           title: "姓名",
+          width: 100,
           key: "name"
         },
         {
           title: "标题",
-          width: 500,
           key: "title"
         },
         {
           title: "email",
+          width: 180,
           key: "email"
         },
         {
           title: "时间",
-          key: "createtime"
+          width: 130,
+          key: "createTime"
         },
         {
           title: "操作",
           align: "center",
+          width: 100,
           key: "action",
           render: (h, params) => {
             return h("div", [
@@ -123,12 +131,12 @@ export default {
     },
     emailSet(e) {
       this.email.id = e.id;
-      this.email.username = e.username;
+      this.email.userId = e.userId;
       this.email.title = e.title;
       this.email.email = e.email;
       this.email.name = e.name;
       this.email.content = e.content;
-      this.email.createtime = e.createtime;
+      this.email.createTime = e.createTime;
     },
     dateGet(e) {
       var time = new Date(parseInt(e));
@@ -146,7 +154,7 @@ export default {
     },
     listDateSet(e) {
       for (var i = e.length - 1; i >= 0; i--) {
-        e[i].createtime = this.dateGet(e[i].createtime);
+        e[i].createTime = this.dateGet(e[i].createTime);
       }
     },
     /*得到表数据*/

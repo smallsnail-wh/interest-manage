@@ -80,7 +80,7 @@ export default {
         },
         {
           title: "创建者ID",
-          key: "userid",
+          key: "userId",
           width: 90
         },
         {
@@ -190,7 +190,7 @@ export default {
       }
       this.axios({
         method: "get",
-        url: "/admin/articles",
+        url: "/interest/blog/admin/articles",
         params: {
           dateTimestamp: dateTimestamp,
           searchContent: this.searchContent,
@@ -229,7 +229,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "delete",
-          url: "/admin/articles",
+          url: "/interest/blog/admin/articles",
           data: this.groupId
         })
           .then(
@@ -250,7 +250,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "patch",
-          url: "/admin/articles",
+          url: "/interest/blog/admin/articles",
           data: this.groupId
         })
         .then(
@@ -285,7 +285,7 @@ export default {
     top(e){
       this.axios({
         method: "patch",
-        url: "/admin/articles/top",
+        url: "/interest/blog/admin/articles/top",
         data: this.groupId,
         params: {
           top: e
