@@ -142,7 +142,7 @@ export default {
                 attrs: {
                   href:
                     this.$store.state.domainName +
-                    "/article/detail/" +
+                    "/blog/detail/" +
                     params.row.id,
                   target: "_blank"
                 }

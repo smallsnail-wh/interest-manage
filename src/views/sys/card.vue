@@ -1,3 +1,8 @@
+<style type="text/css">
+  .text-style {
+    word-wrap:break-word;
+  }
+</style>
 <template>
 	<div style="margin: 20px;">
 		<div>
@@ -29,14 +34,12 @@
         </div>
         <Modal :mask-closable="false" :visible.sync="modal" v-model="modal" width="600" title="查看">
 	        <Form :label-width="80" >
-	        	<Form-item label="登录名:">
-	        		<strong>{{postcard.username}}</strong>
-                    <!-- <Input v-model="email.username" style="width: 204px" disabled="disabled" /> -->
-                </Form-item>
-                <Form-item label="内容:">
-                	<span>{{postcard.content}}</span>
-                    <!-- <Input v-model="email.username" style="width: 204px" disabled="disabled" /> -->
-                </Form-item>
+	        	<Form-item label="标题:">
+	        		<strong class="text-style">{{postcard.title}}</strong>
+            </Form-item>
+            <Form-item label="内容:">
+            	<span class="text-style">{{postcard.content}}</span>
+            </Form-item>
             </Form>
 	        <div slot="footer">
 	            <Button type="error" size="large"  @click="cancel">关闭</Button>
@@ -78,20 +81,23 @@ export default {
           align: "center"
         },
         {
-          title: "登录名",
-          key: "username"
+          title: "用户ID",
+          key: "userId"
         },
         {
           title: "兴趣归属",
-          key: "interestid",
           render: (h, params) => {
-            for (var i = this.interestList.length - 1; i >= 0; i--) {
-              if (params.row.interestid == this.interestList[i].id) {
-                return h("div", [
-                  h("strong", null, this.interestList[i].title)
-                ]);
+            let interestTitle = '';
+            this.interestList.forEach(e=>{
+              if (params.row.interestId == e.id) {
+                console.log(e.title);
+                interestTitle = e.title;
+                return;
               }
-            }
+            });
+            return h("div", [
+                h("strong", null, interestTitle)
+              ]);
           }
         },
         {
@@ -100,8 +106,17 @@ export default {
           key: "title"
         },
         {
-          title: "时间",
-          key: "createtime"
+          title: "发帖时间",
+          width: 130,
+          key: "createTime"
+        },
+        {
+          title: "最近回帖时间",
+          width: 130,
+          render: (h,params) => {
+            let time = this.dateGet(params.row.replyTime);
+            return h("span",null,time);
+          }
         },
         {
           title: "操作",
@@ -140,17 +155,17 @@ export default {
   },
   mounted() {
     /*页面初始化调用方法*/
-    this.getTable({
-      pageInfo: this.pageInfo,
-      interestid: this.interestid
-    });
     this.axios({
       method: "get",
-      url: "/public/interests"
+      url: "/interest/bbs/admin/interests/titles"
     })
       .then(
         function(response) {
           this.interestList = response.data.data;
+          this.getTable({
+            pageInfo: this.pageInfo,
+            interestid: this.interestid
+          });
         }.bind(this)
       )
       .catch(
@@ -190,18 +205,18 @@ export default {
     },
     listDateSet(e) {
       for (var i = e.length - 1; i >= 0; i--) {
-        e[i].createtime = this.dateGet(e[i].createtime);
+        e[i].createTime = this.dateGet(e[i].createTime);
       }
     },
     /*得到表数据*/
     getTable(e) {
       this.axios({
         method: "get",
-        url: "/public/postcards",
+        url: "/interest/bbs/admin/postcards",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize,
-          interestid: e.interestid
+          interestId: e.interestid
         }
       })
         .then(
@@ -248,7 +263,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "delete",
-          url: "/postcards",
+          url: "/interest/bbs/postcards",
           data: this.groupId
         })
           .then(
