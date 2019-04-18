@@ -27,7 +27,7 @@
                 <Upload 
                     ref="upload"
                     :headers="headers"
-                    action="/interest/admin/interest/upload/picture"
+                    action="/api/interest/blog/picture"
                     name="picture"
                     :show-upload-list="false"
                     :before-upload="handleBeforeUpload"
@@ -131,12 +131,9 @@ export default {
     };
   },
   mounted() {
-    // console.log(this.$refs.myQuillEditor);
-    /*页面初始化调用方法*/
-    //this.getTable();
     this.axios({
       method: "get",
-      url: "/public/interests"
+      url: "/interest/bbs/admin/interests/titles"
     })
       .then(
         function(response) {
@@ -192,9 +189,9 @@ export default {
       }
     },
     handleSuccess(res, file) {
-      this.entity.image = res.data.url;
-      file.url = res.data.url;
-      file.name = res.data.url;
+      this.entity.image = res.data;
+      file.url = res.data;
+      file.name = res.data;
     },
     handleBeforeUpload() {
       this.$refs.upload.fileList.splice(0, this.$refs.upload.fileList.length);
@@ -214,7 +211,7 @@ export default {
         if (valid) {
           this.axios({
             method: "put",
-            url: "/admin/interests/interest",
+            url: "/interest/bbs/admin/interests/interest",
             data: this.entity
           })
             .then(
@@ -233,7 +230,7 @@ export default {
     selectChange(e) {
       this.axios({
         method: "get",
-        url: "/public/interests/interest",
+        url: "/interest/bbs/public/interests/interest",
         params: {
           id: e
         }

@@ -19,7 +19,7 @@
                 <Upload 
                     ref="upload"
                     :headers="headers"
-                    action="/interest/admin/interest/upload/picture"
+                    action="/api/interest/blog/picture"
                     name="picture"
                     :show-upload-list="false"
                     :before-upload="handleBeforeUpload"
@@ -146,9 +146,10 @@ export default {
       }
     },
     handleSuccess(res, file) {
-      this.entity.image = res.data.url;
-      file.url = res.data.url;
-      file.name = res.data.url;
+      console.log(res);
+      this.entity.image = res.data;
+      file.url = res.data;
+      file.name = res.data;
     },
     handleBeforeUpload() {
       this.$refs.upload.fileList.splice(0, this.$refs.upload.fileList.length);
@@ -168,7 +169,7 @@ export default {
         if (valid) {
           this.axios({
             method: "post",
-            url: "/admin/interests/interest",
+            url: "/interest/bbs/admin/interests/interest",
             data: this.entity
           })
             .then(
