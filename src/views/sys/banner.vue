@@ -23,21 +23,6 @@
                 </li>
             </ul>
         </div>
-        <Modal :mask-closable="false" :visible.sync="modal" v-model="modal" width="600" title="查看">
-	        <Form :label-width="80" >
-	        	<Form-item label="登录名:">
-	        		<strong>{{postcard.username}}</strong>
-                    <!-- <Input v-model="email.username" style="width: 204px" disabled="disabled" /> -->
-                </Form-item>
-                <Form-item label="内容:">
-                	<span>{{postcard.content}}</span>
-                    <!-- <Input v-model="email.username" style="width: 204px" disabled="disabled" /> -->
-                </Form-item>
-            </Form>
-	        <div slot="footer">
-	            <Button type="error" size="large"  @click="cancel">关闭</Button>
-	        </div>
-	    </Modal>	
     </div>
 </template>
 <script>
@@ -128,7 +113,7 @@ export default {
                 attrs: {
                   href:
                     this.$store.state.domainName +
-                    "/page/detail/" +
+                    "/bbs/detail/" +
                     params.row.id,
                   target: "_blank"
                 }
@@ -157,20 +142,6 @@ export default {
     this.getTable({
       pageInfo: this.pageInfo
     });
-    this.axios({
-      method: "get",
-      url: "/public/interests"
-    })
-      .then(
-        function(response) {
-          this.interestList = response.data.data;
-        }.bind(this)
-      )
-      .catch(
-        function(error) {
-          alter(error);
-        }.bind(this)
-      );
   },
   methods: {
     /*pageInfo实体初始化*/
@@ -210,7 +181,7 @@ export default {
     getTable(e) {
       this.axios({
         method: "get",
-        url: "/admin/interests",
+        url: "/interest/bbs/admin/interests",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize
@@ -247,7 +218,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "put",
-          url: "/admin/banners/set",
+          url: "/interest/bbs/admin/banners/set",
           data: this.groupId
         })
           .then(
@@ -268,7 +239,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "put",
-          url: "/admin/banners/del",
+          url: "/interest/bbs/admin/banners/del",
           data: this.groupId
         })
           .then(
