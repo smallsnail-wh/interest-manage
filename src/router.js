@@ -23,12 +23,12 @@ const routers = [
       title: "base",
       requiresAuth: true
     },
-    component: resolve => require(["./views/sys/base.vue"], resolve),
+    component: resolve => require(["./views/base.vue"], resolve),
     children: [
       {
         path: "",
         name: "welcome",
-        component: resolve => require(["./views/sys/welcome.vue"], resolve),
+        component: resolve => require(["./views/welcome.vue"], resolve),
         meta: {
           title: "welcome"
         }
@@ -52,7 +52,7 @@ const routers = [
       {
         path: "system-user",
         name: "system-user",
-        component: resolve => require(["./views/sys/user.vue"], resolve),
+        component: resolve => require(["./views/sys/system-user.vue"], resolve),
         meta: {
           title: "user"
         }
@@ -60,7 +60,7 @@ const routers = [
       {
         path: "email",
         name: "email",
-        component: resolve => require(["./views/sys/email.vue"], resolve),
+        component: resolve => require(["./views/email/email.vue"], resolve),
         meta: {
           title: "email"
         }
@@ -68,7 +68,7 @@ const routers = [
       {
         path: "card",
         name: "cardmanage",
-        component: resolve => require(["./views/sys/card.vue"], resolve),
+        component: resolve => require(["./views/postcard/card.vue"], resolve),
         meta: {
           title: "card"
         }
@@ -77,7 +77,7 @@ const routers = [
         path: "i-edit",
         name: "interest-edit",
         component: resolve =>
-          require(["./views/sys/interest/interest-edit.vue"], resolve),
+          require(["./views/interest/interest-edit.vue"], resolve),
         meta: {
           title: "interest"
         }
@@ -86,7 +86,7 @@ const routers = [
         path: "i-create",
         name: "interest-create",
         component: resolve =>
-          require(["./views/sys/interest/interest-create.vue"], resolve),
+          require(["./views/interest/interest-create.vue"], resolve),
         meta: {
           title: "interest"
         }
@@ -95,7 +95,7 @@ const routers = [
         path: "i-delete",
         name: "interest-delete",
         component: resolve =>
-          require(["./views/sys/interest/interest-delete.vue"], resolve),
+          require(["./views/interest/interest-delete.vue"], resolve),
         meta: {
           title: "interest"
         }
@@ -103,7 +103,7 @@ const routers = [
       {
         path: "banner",
         name: "banner",
-        component: resolve => require(["./views/sys/banner.vue"], resolve),
+        component: resolve => require(["./views/banner/banner.vue"], resolve),
         meta: {
           title: "banner"
         }
@@ -111,7 +111,15 @@ const routers = [
       {
         path: "article",
         name: "article",
-        component: resolve => require(["./views/sys/article.vue"], resolve),
+        component: resolve => require(["./views/article/article.vue"], resolve),
+        meta: {
+          title: "article"
+        }
+      },
+      {
+        path: "ordinary-user",
+        name: "ordinary-user",
+        component: resolve => require(["./views/user/ordinary-user.vue"], resolve),
         meta: {
           title: "article"
         }

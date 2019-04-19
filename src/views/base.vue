@@ -89,7 +89,7 @@
                 <div class="layout-logo-left">
                   <div>
                     <a href="https://www.lovemtt.com" target="_blank">
-                        <img src="../../images/logo.jpg" style="width: 50px;height: 50px;" align="absmiddle" />
+                        <img src="../images/logo.jpg" style="width: 50px;height: 50px;" align="absmiddle" />
                     </a>
                       <strong>控制台</strong>
                   </div>
@@ -126,7 +126,7 @@
                 </div>
                 <div class="layout-breadcrumb">
                     <Breadcrumb>
-                        <BreadcrumbItem to="/base/welcome">Home</BreadcrumbItem>
+                        <BreadcrumbItem to="/base">Home</BreadcrumbItem>
                         <BreadcrumbItem v-for="item in breadcrumbData" :to="item.url" :key="item.id">{{item.name}}</BreadcrumbItem>
                     </Breadcrumb>
                 </div>
