@@ -189,7 +189,7 @@ export default {
             return h("div", [
               h("Button", {
                 props: { icon: "md-cog" },
-                style: { border: "none", background: "none" },
+                style: { border: "none", background: "none", color: '#ed4014' },
                 on: {
                   click: () => {
                     this.setting(params.row);
