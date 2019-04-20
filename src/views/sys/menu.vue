@@ -319,7 +319,7 @@ export default {
     });
     this.axios({
       method: "get",
-      url: "/menus/parentId",
+      url: "/interest/user/admin/menus/parentId",
       params: {
         parentId: 0
       }
@@ -409,7 +409,7 @@ export default {
     getTable(e) {
       this.axios({
         method: "get",
-        url: "/menus",
+        url: "/interest/user/admin/menus",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize,
@@ -458,7 +458,7 @@ export default {
           this.menuSet(this.menuNew);
           this.axios({
             method: "post",
-            url: "/menus/menu",
+            url: "/interest/user/admin/menus/menu",
             data: this.menu
           })
             .then(
@@ -502,7 +502,7 @@ export default {
           this.menuSet(this.menuModify);
           this.axios({
             method: "put",
-            url: "/menus/" + this.menu.id,
+            url: "/interest/user/admin/menus/" + this.menu.id,
             data: this.menu
           })
             .then(
@@ -554,7 +554,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "delete",
-          url: "/menus",
+          url: "/interest/user/admin/menus",
           data: this.groupId
         })
           .then(
