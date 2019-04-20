@@ -8,12 +8,15 @@
   .del-select span{
     margin-right: 5px;
   }
-  .botton-layout {
-    margin-right: 5px;
+  .content-layout {
+    margin: 40px;
+  }
+  ul {
+    list-style: none;
   }
 </style>
 <template>
-	<div style="margin: 20px;">
+	<div class="content-layout">
         <div>
             <Row style="margin-bottom: 25px;">
                 <Col span="6">用户名：
@@ -40,7 +43,7 @@
                 </li>
                 <li>
                     <div style="padding: 10px 0;">
-                    	<Table border :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
+                    	<Table border :columns="columns1" :data="data1" :height="520" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
                     </div> 
                 </li>
                 <li>
@@ -88,7 +91,7 @@ export default {
           align: "center"
         },
         {
-          title: "用户ID",
+          title: "ID",
           width: 80,
           key: "id"
         },
@@ -239,7 +242,7 @@ export default {
     },
     /*得到表数据*/
     getTable(e) {
-      var status = 0;
+      let status = 0;
       if(this.del){
         status = 1;
       }

@@ -2,9 +2,21 @@
   .operation-button{
     margin-right: 3px;
   }
+  .del-select {
+    margin-bottom: 25px;
+  }
+  .del-select span{
+    margin-right: 5px;
+  }
+  .content-layout {
+    margin: 40px;
+  }
+  ul {
+    list-style: none;
+  }
 </style>
 <template>
-	<div style="margin: 20px;">
+	<div class="content-layout">
         <div>
             <Row style="margin-bottom: 25px;">
                 <Col span="6">用户名：
@@ -15,16 +27,25 @@
                 </Col>
                 <Col span="3"><Button type="primary" shape="circle" icon="ios-search" @click="search()">搜索</Button></Col>
             </Row>
-        </div>            
+        </div>      
+        <div class="del-select">
+          <span>删除：</span>
+          <i-switch size="large" v-model="del" @on-change="switchChange()">
+            <span slot="open">开启</span>
+            <span slot="close">关闭</span>
+          </i-switch>
+        </div>         
         <div>
             <ul>
                 <li>
-                    <Button class="operation-button" type="success" icon="md-build" @click="openModifyModal()">修改</Button>
-                    <Button type="error" icon="md-trash" @click="del()">删除</Button>
+                    <Button v-if="del" class="operation-button" type="success" icon="md-build" @click="recover()">恢复</Button>
+                    <Button v-if="!del" class="operation-button" type="primary" icon="md-add" @click="openNewModal()">新建</Button>
+                    <Button v-if="!del" class="operation-button" type="success" icon="md-build" @click="openModifyModal()">修改</Button>
+                    <Button v-if="!del" type="error" icon="md-trash" @click="deleteUser()">删除</Button>
                 </li>
                 <li>
                     <div style="padding: 10px 0;">
-                    	<Table border :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
+                    	<Table border :columns="columns1" :data="data1" :height="520" @on-selection-change="s=>{change(s)}" @on-row-dblclick="s=>{dblclick(s)}"></Table>
                     </div> 
                 </li>
                 <li>
@@ -34,24 +55,59 @@
                 </li>
             </ul>
         </div>
-        <!--修改modal-->  
-        <Modal :mask-closable="false" :visible.sync="modifyModal" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk()" @on-cancel="cancel()">
-             <Form :label-width="80" >
+        <!--添加modal-->  
+        <Modal :mask-closable="false" :visible.sync="newModal" :loading = "loading" v-model="newModal" width="600" title="新建" @on-ok="newOk('userNew')" @on-cancel="cancel()">
+            <Form ref="userNew" :model="userNew" :rules="ruleNew" :label-width="80" >
                 <Row>
                     <Col span="12">
-                        <Form-item label="登录名:">
-                            <Input v-model="userModify.name" style="width: 204px" disabled="disabled" />
+                        <Form-item label="登录名:" prop="loginName">
+                            <Input v-model="userNew.loginName" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                    <Col span="12">
+                        <Form-item label="用户名:" prop="name">
+                            <Input v-model="userNew.name" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span="12">
-                        <Form-item label="用户类型:">
-                            <Select v-model="userModify.usertype" style="width:200px">
-                                <Option  :value="0">普通用户</Option>
-                                <Option  :value="1">管理员</Option>
-                            </Select>
-                            <!-- <Input v-model="userModify.email" style="width: 204px"/> -->
+                        <Form-item label="密码:" prop="password">
+                            <Input v-model="userNew.password" type="password" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                    <Col span="12">
+                        <Form-item label="确认密码:" prop="passwordAgain">
+                            <Input v-model="userNew.passwordAgain" type="password" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                </Row>
+            </Form>
+        </Modal>
+        <!--修改modal-->  
+        <Modal :mask-closable="false" :visible.sync="modifyModal" :loading = "loading" v-model="modifyModal" width="600" title="修改" @on-ok="modifyOk('userModify')" @on-cancel="cancel()">
+             <Form ref="userModify" :model="userModify" :rules="ruleModify" :label-width="80" >
+                <Row>
+                    <Col span="12">
+                        <Form-item label="登录名:" prop="loginName">
+                            <Input v-model="userModify.loginName" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                    <Col span="12">
+                        <Form-item label="用户名:" prop="name">
+                            <Input v-model="userModify.name" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span="12">
+                        <Form-item label="密码:" prop="password">
+                            <Input v-model="userModify.password" type="password" style="width: 204px"/>
+                        </Form-item>
+                    </Col>
+                    <Col span="12">
+                        <Form-item label="确认密码:" prop="passwordAgain">
+                            <Input v-model="userModify.passwordAgain" type="password" style="width: 204px"/>
                         </Form-item>
                     </Col>
                 </Row>
@@ -69,6 +125,7 @@
 export default {
   data() {
     return {
+      del: false,
       userId: null,
       /*用于查找的登录名*/
       name: null,
@@ -76,6 +133,7 @@ export default {
       count: null,
       /*选中的组数据*/
       groupId: null,
+      newModal: false,
       /*修改modal的显示参数*/
       modifyModal: false,
       /*角色配置modal的显示参数*/
@@ -94,15 +152,22 @@ export default {
         id: null,
         name: null,
         loginName: null,
-        password: null,
-        passwordAgain: null,
-        email: null
+        password: null
+      },
+      /*用于添加的user实体*/
+      userNew:{
+        name:null,
+        loginName:null,
+        password:null,
+        passwordAgain:null
       },
       /*用于修改的user实体*/
       userModify: {
         id: null,
-        name: null,
-        usertype: null
+        name:null,
+        loginName:null,
+        password:null,
+        passwordAgain:null
       },
       /*表显示字段*/
       columns1: [
@@ -110,6 +175,11 @@ export default {
           type: "selection",
           width: 60,
           align: "center"
+        },
+        {
+          title: "ID",
+          width: 80,
+          key: "id"
         },
         {
           title: "用户名",
@@ -136,7 +206,7 @@ export default {
           }
         },
         {
-          title: "Github",
+          title: "url",
           key: "url",
           width: 300,
           render: (h, params) => {
@@ -156,44 +226,26 @@ export default {
           title: "邮箱",
           key: "email"
         },
-        {
-          title: "用户类型",
-          align: "center",
-          key: "usertype",
-          render: (h, params) => {
-            if (params.row.githubid != null && params.row.githubid != '' ) {
-              return h("div", [h("strong", {style:{color: 'rebeccapurple'}}, "github")]);
-            } else if (params.row.qqid != null && params.row.qqid != '' ) {
-              return h("div", [h("strong", {style:{color: '#f90'}}, "qq")]);
-            } else {
-              return h("div", [h("strong", null, "系统用户")]);
-            }
-          }
-        },
-        {
+          {
           title: "注册时间",
           key: "createTime"
         },
         {
-          title: "操作",
-          align: "center",
+          title: "配置菜单",
           key: "action",
+          width: 180,
+          align: "center",
           render: (h, params) => {
             return h("div", [
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "info"
-                  },
-                  on: {
-                    click: () => {
-                      this.relationSet(params.row);
-                    }
+              h("Button", {
+                props: { icon: "md-cog" },
+                style: { border: "none", background: "none", color: '#ed4014' },
+                on: {
+                  click: () => {
+                    this.relationSet(params.row);
                   }
-                },
-                "配置角色"
-              )
+                }
+              })
             ]);
           }
         }
@@ -222,7 +274,36 @@ export default {
       /*data2的临时存储*/
       data2Temp: [],
       /*用户与角色关系列表*/
-      relationList: null
+      relationList: null,
+      /*新建验证*/
+      ruleNew:{
+          name: [
+              { type:'string',required: true, message: '输入用户名', trigger: 'blur' }
+          ],
+          loginName: [
+              { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
+          ],
+          password: [
+              { type:'string',required: true, message: '输入密码', trigger: 'blur' }
+          ],
+          passwordAgain: [
+              { type:'string',required: true, message: '输入再次密码', trigger: 'blur' }
+          ]
+      },
+      ruleModify:{
+          name: [
+              { type:'string',required: true, message: '输入用户名', trigger: 'blur' }
+          ],
+          loginName: [
+              { type:'string',required: true, message: '输入登录名', trigger: 'blur' }
+          ],
+          password: [
+              { type:'string',required: true, message: '输入密码', trigger: 'blur' }
+          ],
+          passwordAgain: [
+              { type:'string',required: true, message: '输入再次密码', trigger: 'blur' }
+          ]
+      }
     };
   },
   mounted() {
@@ -256,7 +337,12 @@ export default {
       this.user.name = null;
       this.user.loginName = null;
       this.user.password = null;
-      this.user.email = null;
+    },
+    initUserNew() {
+      this.userNew.name = null;
+      this.userNew.loginName = null;
+      this.userNew.password = null;
+      this.userNew.passwordAgain = null;
     },
     /*userModify实体初始化*/
     initUserModify() {
@@ -264,7 +350,7 @@ export default {
       this.userModify.name = null;
       this.userModify.loginName = null;
       this.userModify.password = null;
-      this.userModify.email = null;
+      this.userModify.passwordAgain = null;
     },
     /*user设置*/
     userSet(e) {
@@ -272,13 +358,14 @@ export default {
       this.user.name = e.name;
       this.user.loginName = e.loginName;
       this.user.password = e.password;
-      this.user.email = e.email;
     },
     /*userModify设置*/
     userModifySet(e) {
       this.userModify.id = e.id;
       this.userModify.name = e.name;
-      this.userModify.usertype = e.usertype;
+      this.userModify.loginName = e.loginName;
+      this.userModify.password = e.password;
+      this.userModify.passwordAgain = e.passwordAgain;
     },
     dateGet(e) {
       var time = new Date(parseInt(e));
@@ -301,14 +388,21 @@ export default {
     },
     /*得到表数据*/
     getTable(e) {
+      let status = 0;
+      if(this.del){
+        status = 1;
+      }
       this.axios({
         method: "get",
-        url: "/interest/user/users",
+        url: "/interest/user/admin/users",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize,
           name: e.name,
-          userId: e.userId
+          userId: e.userId,
+          status: status,
+          type: 1,
+
         }
       })
         .then(
@@ -350,31 +444,48 @@ export default {
       }
     },
     /*修改modal的modifyOk点击事件*/
-    modifyOk() {
-      // this.initUser();
-      // this.userSet(this.userModify);
-      this.axios({
-        method: "put",
-        url: "/users/user",
-        data: {
-          name: this.userModify.name,
-          usertype: this.userModify.usertype,
-          id: this.userModify.id
+    modifyOk(ruleModify) {
+      this.$refs[ruleModify].validate((valid) => {
+        if (valid) {
+            if(this.userModify.password == this.userModify.passwordAgain){
+                this.initUser();
+                this.userSet(this.userModify);
+                this.axios({
+                  method: "put",
+                  url: "/interest/user/admin/users/user",
+                  data: this.user
+                })
+                  .then(
+                    function(response) {
+                      this.getTable({
+                        pageInfo: this.pageInfo,
+                        name: this.name,
+                        userId: this.userId
+                      });
+                      this.$Message.info("修改成功");
+                    }.bind(this)
+                  )
+                  .catch(function(error) {
+                    alert(error);
+                  });
+                this.modifyModal = false;
+            }else{
+                this.$Message.error('两次输入的密码不相同！');
+                this.loading = false;
+                this.$nextTick(() => {
+                    this.loading = true;
+                });
+            }
+        }else {
+            this.$Message.error('表单验证失败!');
+            setTimeout(() => {
+                this.loading = false;
+                this.$nextTick(() => {
+                    this.loading = true;
+                });
+            }, 1000);
         }
       })
-        .then(
-          function(response) {
-            this.getTable({
-              pageInfo: this.pageInfo,
-              name: this.name
-            });
-            this.$Message.info("修改成功");
-          }.bind(this)
-        )
-        .catch(function(error) {
-          alert(error);
-        });
-      this.modifyModal = false;
     },
     /*modal的cancel点击事件*/
     cancel() {
@@ -396,22 +507,47 @@ export default {
       }
     },
     /*删除table中选中的数据*/
-    del() {
+    deleteUser() {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "delete",
-          url: "/users",
+          url: "/interest/user/admin/users",
           data: this.groupId
         })
           .then(
             function(response) {
               this.getTable({
                 pageInfo: this.pageInfo,
-                name: this.name
+                name: this.name,
+                userId: this.userId
               });
               this.groupId = null;
               this.count = 0;
               this.$Message.info("删除成功");
+            }.bind(this)
+          )
+          .catch(function(error) {
+            alert(error);
+          });
+      }
+    },
+    recover() {
+      if (this.groupId != null && this.groupId != "") {
+        this.axios({
+          method: "patch",
+          url: "/interest/user/admin/users",
+          data: this.groupId
+        })
+          .then(
+            function(response) {
+              this.getTable({
+                pageInfo: this.pageInfo,
+                name: this.name,
+                userId: this.userId
+              });
+              this.groupId = null;
+              this.count = 0;
+              this.$Message.info("恢复成功");
             }.bind(this)
           )
           .catch(function(error) {
@@ -431,45 +567,45 @@ export default {
       this.data2 = [];
       this.axios({
         method: "get",
-        url: "/relations/" + e.id
+        url: "/interest/user/admin/relations/" + e.id
       })
-        .then(
-          function(response) {
-            var roleList = [];
-            for (var i in response.data.data) {
-              roleList.push(response.data.data[i].roleId);
+      .then(
+        function(response) {
+          var roleList = [];
+          for (var i in response.data.data) {
+            roleList.push(response.data.data[i].roleId);
+          }
+          for (var i in this.data2Temp) {
+            if (roleList.indexOf(this.data2Temp[i].id) == -1) {
+              this.data2.push({
+                id: this.data2Temp[i].id,
+                name: this.data2Temp[i].name,
+                describe: this.data2Temp[i].describe,
+                userId: e.id,
+                _checked: false
+              });
+            } else {
+              this.data2.push({
+                id: this.data2Temp[i].id,
+                name: this.data2Temp[i].name,
+                describe: this.data2Temp[i].describe,
+                userId: e.id,
+                _checked: true
+              });
             }
-            for (var i in this.data2Temp) {
-              if (roleList.indexOf(this.data2Temp[i].id) == -1) {
-                this.data2.push({
-                  id: this.data2Temp[i].id,
-                  name: this.data2Temp[i].name,
-                  describe: this.data2Temp[i].describe,
-                  userId: e.id,
-                  _checked: false
-                });
-              } else {
-                this.data2.push({
-                  id: this.data2Temp[i].id,
-                  name: this.data2Temp[i].name,
-                  describe: this.data2Temp[i].describe,
-                  userId: e.id,
-                  _checked: true
-                });
-              }
-            }
-          }.bind(this)
-        )
-        .catch(function(error) {
-          alert(error);
-        });
+          }
+        }.bind(this)
+      )
+      .catch(function(error) {
+        alert(error);
+      });
     },
     /*配置角色modal确认按钮点击事件*/
     roleOk() {
       if (this.relationList != null) {
         this.axios({
           method: "post",
-          url: "/relations",
+          url: "/interest/user/admin/relations",
           data: this.relationList
         })
           .then(
@@ -497,7 +633,64 @@ export default {
           roleId: e[i].id
         });
       }
-    }
+    },
+    switchChange(){
+      this.groupId = [];
+      this.getTable({
+        pageInfo: this.pageInfo,
+        name: this.name,
+        userId: this.userId
+      });
+    },
+    /*新建点击触发事件*/
+    openNewModal(){
+        this.newModal = true;
+        this.initUserNew();
+        this.data1.sort();
+        this.count = 0;
+        this.groupId = null;
+    },
+    /*新建modal的newOk点击事件*/
+    newOk (userNew) { 
+        this.$refs[userNew].validate((valid) => {
+            if (valid) {
+                if(this.userNew.password == this.userNew.passwordAgain){
+                    this.initUser();
+                    this.userSet(this.userNew);
+                    this.axios({
+                        method: 'post',
+                        url: '/interest/user/admin/users/user',
+                        data: this.user
+                    }).then(function (response) {
+                        this.initUserNew();
+                        this.getTable({
+                          pageInfo: this.pageInfo,
+                          name: this.name,
+                          userId: this.userId
+                        });
+                        this.$Message.info('新建成功');
+                    }.bind(this)).catch(function (error) {
+                        alert(error);
+                    });  
+                    this.newModal = false;
+                }else{
+                    this.$Message.error('两次输入的密码不相同！');
+                    this.loading = false;
+                    this.$nextTick(() => {
+                        this.loading = true;
+                    });
+                }
+            }else {
+                this.$Message.error('表单验证失败!');
+                setTimeout(() => {
+                    this.loading = false;
+                    this.$nextTick(() => {
+                        this.loading = true;
+                    });
+                }, 1000);
+            }
+        })
+    },
   }
 };
 </script>

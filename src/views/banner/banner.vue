@@ -2,9 +2,15 @@
   .operation-button{
     margin-right: 3px;
   }
+  .content-layout {
+    margin: 40px;
+  }
+  ul {
+    list-style: none;
+  }
 </style>
 <template>
-	<div style="margin: 40px;">
+	<div class="content-layout">
         <div>
             <ul>
             	<li>
@@ -13,7 +19,7 @@
                 </li>
                 <li>
                     <div style="padding: 10px 0;">
-                    	<Table border :columns="columns1" :data="data1" :height="400" @on-selection-change="s=>{change(s)}"></Table>
+                    	<Table border :columns="columns1" :data="data1" :height="520" @on-selection-change="s=>{change(s)}"></Table>
                     </div> 
                 </li>
                 <li>
