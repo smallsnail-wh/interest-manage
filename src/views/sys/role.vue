@@ -188,7 +188,7 @@ export default {
           render: (h, params) => {
             return h("div", [
               h("Button", {
-                props: { icon: "gear-b" },
+                props: { icon: "md-cog" },
                 style: { border: "none", background: "none" },
                 on: {
                   click: () => {
@@ -244,14 +244,14 @@ export default {
       submenusList: []
     };
   },
-  mounted() {
+  created() {
     /*页面初始化调用方法*/
     this.getTable({
       pageInfo: this.pageInfo
     });
     this.axios({
       method: "get",
-      url: "/menus/submenus"
+      url: "/interest/user/admin/menus/submenus"
     })
       .then(
         function(response) {
@@ -320,7 +320,7 @@ export default {
     getTable(e) {
       this.axios({
         method: "get",
-        url: "/roles",
+        url: "/interest/user/admin/roles",
         params: {
           page: e.pageInfo.page,
           pageSize: e.pageInfo.pageSize
@@ -359,7 +359,7 @@ export default {
           this.roleSet(this.roleNew);
           this.axios({
             method: "post",
-            url: "/roles/role",
+            url: "/interest/user/admin/roles/role",
             data: this.role
           })
             .then(
@@ -402,7 +402,7 @@ export default {
           this.roleSet(this.roleModify);
           this.axios({
             method: "put",
-            url: "/roles/" + this.role.id,
+            url: "/interest/user/admin/roles/" + this.role.id,
             data: this.role
           })
             .then(
@@ -470,7 +470,7 @@ export default {
       this.roleSet(this.roleModify);
       this.axios({
         method: "put",
-        url: "/roles/" + this.role.id,
+        url: "/interest/user/admin/roles/" + this.role.id,
         data: this.role
       })
         .then(
@@ -510,7 +510,7 @@ export default {
       if (this.groupId != null && this.groupId != "") {
         this.axios({
           method: "delete",
-          url: "/roles",
+          url: "/interest/user/admin/roles",
           data: this.groupId
         })
           .then(
